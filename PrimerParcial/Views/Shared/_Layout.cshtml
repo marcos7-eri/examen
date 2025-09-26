@@ -39,8 +39,6 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="Ingredients" asp-action="Index">Ingredients</a>
                         </li>
                     </ul>
-
-                    @* (Opcional) espacio para buscar o acciones derechas *@
                     <div class="d-flex">
                         @RenderSection("NavbarRight", required: false)
                     </div>
@@ -50,7 +48,6 @@
     </header>
 
     <div class="container">
-        @* Mensajes simples con TempData["Success"], ["Info"], ["Error"] *@
         @if (TempData["Success"] is string s)
         {
             <div class="alert alert-success alert-dismissible fade show" role="alert">

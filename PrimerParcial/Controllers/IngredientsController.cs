@@ -48,7 +48,7 @@ namespace PrimerParcial.Controllers
         // GET: Ingredients/Create
         public IActionResult Create()
         {
-            ViewData["RecipeId"] = new SelectList(_context.Recipes, "Id", "Instructions");
+            ViewData["RecipeId"] = new SelectList(_context.Recipes, "Id", "Description");
             return View();
         }
 
@@ -57,7 +57,7 @@ namespace PrimerParcial.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Unit,Quantity,RecipeId")] Ingredient ingredient)
+        public async Task<IActionResult> Create([Bind("Id,Name,Quantity,RecipeId")] Ingredient ingredient)
         {
             if (ModelState.IsValid)
             {
@@ -65,7 +65,7 @@ namespace PrimerParcial.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["RecipeId"] = new SelectList(_context.Recipes, "Id", "Instructions", ingredient.RecipeId);
+            ViewData["RecipeId"] = new SelectList(_context.Recipes, "Id", "Description", ingredient.RecipeId);
             return View(ingredient);
         }
 
@@ -82,7 +82,7 @@ namespace PrimerParcial.Controllers
             {
                 return NotFound();
             }
-            ViewData["RecipeId"] = new SelectList(_context.Recipes, "Id", "Instructions", ingredient.RecipeId);
+            ViewData["RecipeId"] = new SelectList(_context.Recipes, "Id", "Description", ingredient.RecipeId);
             return View(ingredient);
         }
 
@@ -91,7 +91,7 @@ namespace PrimerParcial.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Unit,Quantity,RecipeId")] Ingredient ingredient)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Quantity,RecipeId")] Ingredient ingredient)
         {
             if (id != ingredient.Id)
             {
@@ -118,7 +118,7 @@ namespace PrimerParcial.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["RecipeId"] = new SelectList(_context.Recipes, "Id", "Instructions", ingredient.RecipeId);
+            ViewData["RecipeId"] = new SelectList(_context.Recipes, "Id", "Description", ingredient.RecipeId);
             return View(ingredient);
         }
 

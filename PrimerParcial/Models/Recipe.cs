@@ -1,36 +1,28 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace PrimerParcial.Models
+namespace PrimerParcial.Models;
+
+public class Recipe
 {
-    public class Recipe
-    {
-        public int Id { get; set; }
+    public int Id { get; set; }
 
-        [Required, StringLength(120)]
-        public string Title { get; set; } = string.Empty;
+    [Required, StringLength(100)]
+    public string Title { get; set; } = "";
 
-        [StringLength(500)]
-        public string? Description { get; set; }
+    [Required]
+    public string Description { get; set; } = "";
 
-        [Range(1, 1000)]
-        public int PreparationTimeMinutes { get; set; }
+    public int PreparationTimeMinutes { get; set; }
 
-        [Range(1, 100)]
-        public int Servings { get; set; }
+    public int Servings { get; set; }
 
-        [Required]
-        public string Instructions { get; set; } = string.Empty;
+    [Required]
+    public string Instructions { get; set; } = "";
 
-        public DateTime DateCreated { get; set; } = DateTime.UtcNow;
+    public DateTime DateCreated { get; set; } = DateTime.Now;
 
-        // FK
-        [Display(Name = "Category")]
-        public int CategoryId { get; set; }
-        public Category? Category { get; set; }
+    public int CategoryId { get; set; }
+    public Category? Category { get; set; }
 
-        // Navegación
-        public ICollection<Ingredient> Ingredients { get; set; } = new List<Ingredient>();
-    }
+    public List<Ingredient> Ingredients { get; set; } = new();
 }

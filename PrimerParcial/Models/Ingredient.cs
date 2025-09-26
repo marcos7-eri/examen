@@ -4,19 +4,21 @@ namespace PrimerParcial.Models
 {
     public class Ingredient
     {
+        // Clave Primaria (PK)
         public int Id { get; set; }
 
-        [Required, StringLength(120)]
-        public string Name { get; set; } = string.Empty;
+        [Required]
+        public string Name { get; set; } // Ejemplo: "Harina de Trigo"
 
-        [StringLength(60)]
-        public string? Unit { get; set; } // g, ml, taza, unidad, etc.
+        [Required]
+        public string Quantity { get; set; } // Ejemplo: "2 tazas" o "500 gramos"
 
-        [Range(0.0, 100000.0)]
-        public decimal Quantity { get; set; }
+        // --- Relaciones de Entity Framework Core ---
 
-        // FK
+        // Clave Foránea (FK): Vincula este ingrediente a la receta
         public int RecipeId { get; set; }
-        public Recipe? Recipe { get; set; }
+
+        // Propiedad de Navegación: El lado 'uno'
+        public Recipe Recipe { get; set; }
     }
 }
