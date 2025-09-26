@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PrimerParcial.Data;
 using PrimerParcial.Models;
+using System.Linq;
 
 namespace PrimerParcial.Controllers
 {
@@ -28,17 +24,11 @@ namespace PrimerParcial.Controllers
         // GET: Categories/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
             var category = await _context.Categories
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (category == null)
-            {
-                return NotFound();
-            }
+            if (category == null) return NotFound();
 
             return View(category);
         }
@@ -50,86 +40,81 @@ namespace PrimerParcial.Controllers
         }
 
         // POST: Categories/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Description")] Category category)
+        public async Task<IActionResult> Create([Bind("Name,Description")] Category category)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
+            {
+                // Dump errores en consola y alerta en vista
+                var errores = string.Join(" | ", ModelState
+                    .Where(kv => kv.Value.Errors.Count > 0)
+                    .Select(kv => $"{kv.Key}: {string.Join(",", kv.Value.Errors.Select(e => e.ErrorMessage))}"));
+
+                Console.WriteLine("❌ MODELSTATE ERRORS => " + errores);
+                TempData["err"] = "No se pudo guardar: " + errores;
+
+                return View(category);
+            }
+
+            try
             {
                 _context.Add(category);
                 await _context.SaveChangesAsync();
+                TempData["ok"] = "✅ Categoría registrada correctamente.";
                 return RedirectToAction(nameof(Index));
             }
-            return View(category);
+            catch (Exception ex)
+            {
+                Console.WriteLine("❌ ERROR SAVE => " + ex.Message);
+                TempData["err"] = "Error al guardar en la BD.";
+                return View(category);
+            }
         }
 
         // GET: Categories/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
             var category = await _context.Categories.FindAsync(id);
-            if (category == null)
-            {
-                return NotFound();
-            }
+            if (category == null) return NotFound();
+
             return View(category);
         }
 
         // POST: Categories/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description")] Category category)
         {
-            if (id != category.Id)
+            if (id != category.Id) return NotFound();
+
+            if (!ModelState.IsValid) return View(category);
+
+            try
             {
-                return NotFound();
+                _context.Update(category);
+                await _context.SaveChangesAsync();
+                TempData["ok"] = "✏️ Categoría actualizada.";
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!CategoryExists(category.Id)) return NotFound();
+                throw;
             }
 
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(category);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!CategoryExists(category.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            return View(category);
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Categories/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
             var category = await _context.Categories
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (category == null)
-            {
-                return NotFound();
-            }
+            if (category == null) return NotFound();
 
             return View(category);
         }
@@ -143,9 +128,10 @@ namespace PrimerParcial.Controllers
             if (category != null)
             {
                 _context.Categories.Remove(category);
+                await _context.SaveChangesAsync();
+                TempData["ok"] = "🗑️ Categoría eliminada.";
             }
 
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
